@@ -17,6 +17,13 @@ export default function LandingPage() {
           </Link>
           <Link
             href={primaryHref}
+            href="/dashboard"
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/onboarding"
             className="text-sm bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
           >
             Run Demo
@@ -36,6 +43,7 @@ export default function LandingPage() {
         </p>
         <Link
           href={primaryHref}
+          href="/onboarding"
           className="mt-8 bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700"
         >
           Test Matching Engine

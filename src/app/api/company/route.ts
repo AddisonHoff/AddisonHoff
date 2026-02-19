@@ -23,6 +23,15 @@ export async function POST(request: NextRequest) {
   }
 
   if (!currentUserId) {
+  const userId = await getCurrentUserId();
+  let orgId: string | null = null;
+
+  if (isAuthEnabled()) {
+    const { auth } = await import("@clerk/nextjs/server");
+    orgId = (await auth()).orgId;
+  }
+
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
