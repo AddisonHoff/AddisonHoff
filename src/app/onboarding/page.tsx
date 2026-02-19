@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { OnboardingForm } from "./onboarding-form";
+import { getCurrentUserId } from "@/lib/auth";
 
 export default async function OnboardingPage() {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) redirect("/sign-in");
 
   // Check if already onboarded

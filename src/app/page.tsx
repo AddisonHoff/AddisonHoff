@@ -8,13 +8,13 @@ export default function LandingPage() {
         <span className="text-xl font-semibold text-green-700">ClaimScout</span>
         <div className="flex gap-4">
           <Link
-            href="/sign-in"
+            href="/dashboard"
             className="text-sm text-gray-600 hover:text-gray-900"
           >
-            Sign In
+            Dashboard
           </Link>
           <Link
-            href="/sign-up"
+            href="/onboarding"
             className="text-sm bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
           >
             Get Started
@@ -33,7 +33,7 @@ export default function LandingPage() {
           you get paid.
         </p>
         <Link
-          href="/sign-up"
+          href="/onboarding"
           className="mt-8 bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700"
         >
           Connect Your Accounting Software
