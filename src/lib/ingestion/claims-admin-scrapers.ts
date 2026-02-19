@@ -90,21 +90,21 @@ const ADMIN_CONFIGS: AdminConfig[] = [
     },
   },
   {
-    name: "Kroll",
-    source: SettlementSource.KROLL,
-    listUrl: "https://www.krollsettlementadministration.com/cases",
+    name: "Simpluris",
+    source: SettlementSource.MANUAL,
+    listUrl: "https://www.simpluris.com/cases/",
     parseListPage: ($) => {
       const results: Array<{ title: string; url: string; deadline?: string }> = [];
-      $(".case-listing, article, .settlement-row").each((_, el) => {
+      $(".case-item, article, .case-listing, li").each((_, el) => {
         const $el = $(el);
-        const title = $el.find("h3, h2, a, .case-name").first().text().trim();
+        const title = $el.find("h3, h2, a, .case-name, .title").first().text().trim();
         const href = $el.find("a").first().attr("href") || "";
         if (title && href) {
           results.push({
             title,
             url: href.startsWith("http")
               ? href
-              : `https://www.krollsettlementadministration.com${href}`,
+              : `https://www.simpluris.com${href}`,
           });
         }
       });
@@ -112,21 +112,21 @@ const ADMIN_CONFIGS: AdminConfig[] = [
     },
   },
   {
-    name: "Angeion Group",
-    source: SettlementSource.ANGEION,
-    listUrl: "https://www.angeiongroup.com/cases.php",
+    name: "Analytics Consulting",
+    source: SettlementSource.MANUAL,
+    listUrl: "https://www.analyticsconsulting.com/active-cases/",
     parseListPage: ($) => {
       const results: Array<{ title: string; url: string; deadline?: string }> = [];
-      $("table tr, .case-row, article").each((_, el) => {
+      $("table tr, .case-row, article, li").each((_, el) => {
         const $el = $(el);
-        const title = $el.find("td:first-child a, h3 a, .case-name").first().text().trim();
+        const title = $el.find("td:first-child a, h3 a, .case-name, .title").first().text().trim();
         const href = $el.find("a").first().attr("href") || "";
         if (title && href) {
           results.push({
             title,
             url: href.startsWith("http")
               ? href
-              : `https://www.angeiongroup.com/${href}`,
+              : `https://www.analyticsconsulting.com${href}`,
           });
         }
       });

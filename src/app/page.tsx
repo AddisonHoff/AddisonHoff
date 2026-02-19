@@ -8,16 +8,16 @@ export default function LandingPage() {
         <span className="text-xl font-semibold text-green-700">ClaimScout</span>
         <div className="flex gap-4">
           <Link
-            href="/sign-in"
+            href="/demo"
             className="text-sm text-gray-600 hover:text-gray-900"
           >
-            Sign In
+            Test Core Flow
           </Link>
           <Link
-            href="/sign-up"
+            href="/demo"
             className="text-sm bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
           >
-            Get Started
+            Run Demo
           </Link>
         </div>
       </nav>
@@ -32,14 +32,14 @@ export default function LandingPage() {
           open settlements and file claims automatically. You only pay when
           you get paid.
         </p>
-        <Link
-          href="/sign-up"
+          <Link
+          href="/demo"
           className="mt-8 bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700"
         >
-          Connect Your Accounting Software
+          Test Matching Engine
         </Link>
         <p className="mt-4 text-sm text-gray-400">
-          2-minute setup. No credit card required.
+          No signup required for local testing.
         </p>
 
         {/* How it works */}

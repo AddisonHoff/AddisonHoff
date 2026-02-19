@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { getCurrentUserId, isAuthEnabled } from "@/lib/auth";
 
 /**
  * Create a Rutter Link session for the user's company.
  * Returns a URL to redirect the user to Rutter's OAuth flow.
  */
 export async function POST(request: NextRequest) {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
   // Verify the user belongs to this company
   const member = await db.companyMember.findFirst({
-    where: { clerkUserId: userId, companyId },
+    where: isAuthEnabled() ? { clerkUserId: userId, companyId } : { companyId },
   });
 
   if (!member) {

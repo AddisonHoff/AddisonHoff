@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
+import { getCurrentUserId, isAuthEnabled } from "@/lib/auth";
 
 const createCompanySchema = z.object({
   name: z.string().min(1).max(200),
@@ -14,7 +14,14 @@ const createCompanySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const { userId, orgId } = await auth();
+  const userId = await getCurrentUserId();
+  let orgId: string | undefined;
+
+  if (isAuthEnabled()) {
+    const { auth } = await import("@clerk/nextjs/server");
+    orgId = (await auth()).orgId ?? undefined;
+  }
+
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -44,7 +51,7 @@ export async function POST(request: NextRequest) {
   const company = await db.company.create({
     data: {
       ...parsed.data,
-      clerkOrgId: orgId || undefined,
+      clerkOrgId: orgId,
       members: {
         create: {
           clerkUserId: userId,
