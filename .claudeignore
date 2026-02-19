@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+.next/
+dist/
+out/
+build/
+
+# IDE and System files
+.vscode/
+.idea/
+.DS_Store
+*.log
+
+# Environment secrets (Claude shouldn't read these unless asked)
+.env
+.env.local
+.env.production
+
+# Version control
+.git/
