@@ -1,15 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import Link from "next/link";
+import { getCurrentUserId, isAuthEnabled } from "@/lib/auth";
 
 export default async function DashboardPage() {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) redirect("/sign-in");
 
   // Get company for this user
   const member = await db.companyMember.findFirst({
-    where: { clerkUserId: userId },
+    where: isAuthEnabled() ? { clerkUserId: userId } : undefined,
     include: {
       company: {
         include: {

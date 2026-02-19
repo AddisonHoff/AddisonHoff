@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { ConnectButton } from "./connect-button";
+import { getCurrentUserId } from "@/lib/auth";
 
 export default async function ConnectAccountingPage() {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) redirect("/sign-in");
 
   const member = await db.companyMember.findFirst({
