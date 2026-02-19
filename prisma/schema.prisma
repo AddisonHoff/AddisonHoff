@@ -1,0 +1,270 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Company (our customer) ───────────────────────────────────────
+
+model Company {
+  id        String   @id @default(cuid())
+  clerkOrgId String? @unique
+  name      String
+  ein       String?
+  state     String?
+  naicsCode String?
+  address   String?
+  city      String?
+  zip       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members          CompanyMember[]
+  rutterConnection RutterConnection?
+  vendorTransactions VendorTransaction[]
+  claims           Claim[]
+  stripeCustomerId String?
+
+  @@map("companies")
+}
+
+model CompanyMember {
+  id        String   @id @default(cuid())
+  clerkUserId String
+  companyId String
+  role      MemberRole @default(ADMIN)
+  email     String
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([clerkUserId, companyId])
+  @@map("company_members")
+}
+
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
+
+// ─── Rutter / Accounting Integration ──────────────────────────────
+
+model RutterConnection {
+  id              String   @id @default(cuid())
+  companyId       String   @unique
+  accessToken     String
+  platform        String   // quickbooks, xero, netsuite, sage
+  connectionId    String   @unique
+  lastSyncAt      DateTime?
+  syncStatus      SyncStatus @default(PENDING)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("rutter_connections")
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCING
+  SYNCED
+  ERROR
+}
+
+// ─── Vendor Transactions (pulled from accounting software) ────────
+
+model VendorTransaction {
+  id            String   @id @default(cuid())
+  companyId     String
+  vendorName    String
+  vendorNameNormalized String
+  amount        Decimal  @db.Decimal(12, 2)
+  currency      String   @default("USD")
+  transactionDate DateTime
+  description   String?
+  category      String?
+  rutterTxnId   String?  @unique
+  createdAt     DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, vendorNameNormalized])
+  @@index([companyId, transactionDate])
+  @@map("vendor_transactions")
+}
+
+// ─── Settlements ──────────────────────────────────────────────────
+
+model Settlement {
+  id                String   @id @default(cuid())
+  caseName          String
+  caseNumber        String?
+  court             String?
+  sourceUrl         String?
+  source            SettlementSource
+  claimsAdminName   String?
+  claimsAdminUrl    String?
+  claimFormUrl      String?
+
+  // Key dates
+  claimDeadline     DateTime?
+  eligibleStartDate DateTime?
+  eligibleEndDate   DateTime?
+  settlementDate    DateTime?
+
+  // Details
+  defendants        SettlementDefendant[]
+  totalAmount       Decimal? @db.Decimal(14, 2)
+  estimatedPerClaimant String?
+  eligibleDescription String?  @db.Text
+  eligibleNaicsCodes  String[] // NAICS codes that qualify
+  eligibleStates      String[] // states that qualify, empty = all
+
+  status            SettlementStatus @default(ACTIVE)
+  rawData           Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  claims            Claim[]
+  matches           Match[]
+
+  @@unique([caseName, caseNumber])
+  @@map("settlements")
+}
+
+enum SettlementSource {
+  COURT_LISTENER
+  TOP_CLASS_ACTIONS
+  CLASS_ACTION_ORG
+  EPIQ
+  RUST_CONSULTING
+  JND
+  KROLL
+  ANGEION
+  MANUAL
+}
+
+enum SettlementStatus {
+  ACTIVE       // claim period open
+  UPCOMING     // approved but claim period not yet open
+  EXPIRED      // deadline passed
+  ARCHIVED
+}
+
+model SettlementDefendant {
+  id           String   @id @default(cuid())
+  settlementId String
+  name         String
+  aliases      String[] // known aliases / subsidiaries
+  parentCompany String?
+
+  settlement Settlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+
+  @@index([settlementId])
+  @@map("settlement_defendants")
+}
+
+// ─── Matching ─────────────────────────────────────────────────────
+
+model Match {
+  id             String   @id @default(cuid())
+  companyId      String
+  settlementId   String
+  vendorName     String
+  defendantName  String
+  confidence     Float    // 0.0 – 1.0
+  matchMethod    MatchMethod
+  eligibleSpend  Decimal? @db.Decimal(12, 2)
+  estimatedPayout String?
+  status         MatchStatus @default(PENDING_REVIEW)
+  reviewedAt     DateTime?
+  createdAt      DateTime @default(now())
+
+  settlement Settlement @relation(fields: [settlementId], references: [id])
+  claim      Claim?
+
+  @@unique([companyId, settlementId])
+  @@index([companyId, status])
+  @@map("matches")
+}
+
+enum MatchMethod {
+  FUZZY
+  LLM
+  EXACT
+  MANUAL
+}
+
+enum MatchStatus {
+  PENDING_REVIEW
+  CONFIRMED
+  REJECTED
+  SENT_TO_CUSTOMER
+}
+
+// ─── Claims ───────────────────────────────────────────────────────
+
+model Claim {
+  id           String   @id @default(cuid())
+  companyId    String
+  settlementId String
+  matchId      String?  @unique
+  status       ClaimStatus @default(IDENTIFIED)
+  approvalToken String? @unique // JWT token for email approval
+  approvedAt   DateTime?
+  filedAt      DateTime?
+  paidAt       DateTime?
+  payoutAmount Decimal? @db.Decimal(12, 2)
+  feeAmount    Decimal? @db.Decimal(12, 2)
+  feeCharged   Boolean  @default(false)
+  stripeChargeId String?
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company    Company    @relation(fields: [companyId], references: [id])
+  settlement Settlement @relation(fields: [settlementId], references: [id])
+  match      Match?     @relation(fields: [matchId], references: [id])
+
+  @@index([companyId, status])
+  @@index([status])
+  @@map("claims")
+}
+
+enum ClaimStatus {
+  IDENTIFIED         // match found, not yet sent to customer
+  PENDING_APPROVAL   // email sent, waiting for customer response
+  APPROVED           // customer approved, ready to file
+  FILING             // in the process of being filed
+  FILED              // submitted to claims admin
+  PAID               // payout received
+  FEE_COLLECTED      // our fee has been charged
+  DECLINED           // customer declined
+  EXPIRED            // deadline passed without action
+  REJECTED           // claims admin rejected the claim
+}
+
+// ─── Ingestion Tracking ──────────────────────────────────────────
+
+model IngestionLog {
+  id        String   @id @default(cuid())
+  source    SettlementSource
+  status    IngestionStatus
+  itemsFound Int     @default(0)
+  itemsNew   Int     @default(0)
+  error     String?
+  startedAt DateTime @default(now())
+  finishedAt DateTime?
+
+  @@map("ingestion_logs")
+}
+
+enum IngestionStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}

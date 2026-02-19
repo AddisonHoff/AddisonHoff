@@ -1,0 +1,80 @@
+import Link from "next/link";
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* Nav */}
+      <nav className="border-b bg-white px-6 py-4 flex items-center justify-between">
+        <span className="text-xl font-semibold text-green-700">ClaimScout</span>
+        <div className="flex gap-4">
+          <Link
+            href="/sign-in"
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/sign-up"
+            className="text-sm bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+          >
+            Get Started
+          </Link>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <h1 className="text-4xl sm:text-5xl font-bold max-w-2xl leading-tight">
+          Your business is owed money from class action settlements.
+        </h1>
+        <p className="mt-6 text-lg text-gray-600 max-w-lg">
+          Connect your accounting software. We match your vendor history to
+          open settlements and file claims automatically. You only pay when
+          you get paid.
+        </p>
+        <Link
+          href="/sign-up"
+          className="mt-8 bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700"
+        >
+          Connect Your Accounting Software
+        </Link>
+        <p className="mt-4 text-sm text-gray-400">
+          2-minute setup. No credit card required.
+        </p>
+
+        {/* How it works */}
+        <div className="mt-20 max-w-3xl w-full grid sm:grid-cols-3 gap-8 text-left">
+          <div>
+            <div className="text-2xl font-bold text-green-600 mb-2">1</div>
+            <h3 className="font-semibold mb-1">Connect</h3>
+            <p className="text-sm text-gray-500">
+              Link your QuickBooks, Xero, or other accounting software via
+              secure OAuth. Takes 2 minutes.
+            </p>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-green-600 mb-2">2</div>
+            <h3 className="font-semibold mb-1">We Match</h3>
+            <p className="text-sm text-gray-500">
+              Our engine continuously scans open class action settlements and
+              matches them to your vendor purchase history.
+            </p>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-green-600 mb-2">3</div>
+            <h3 className="font-semibold mb-1">Get Paid</h3>
+            <p className="text-sm text-gray-500">
+              Approve claims with one click from your email. We file everything
+              and collect your payout. Our fee: 25% of what you receive.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t bg-white px-6 py-8 text-center text-sm text-gray-400">
+        ClaimScout — Finding money businesses forgot about.
+      </footer>
+    </div>
+  );
+}

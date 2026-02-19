@@ -1,0 +1,49 @@
+{
+  "name": "settlement-claims-matcher",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Automatically matches businesses to class action settlement claims they're eligible for",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "inngest:dev": "npx inngest-cli@latest dev"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@prisma/client": "^5.19.0",
+    "@clerk/nextjs": "^5.3.0",
+    "inngest": "^3.19.0",
+    "resend": "^4.0.0",
+    "@react-email/components": "^0.0.25",
+    "react-email": "^3.0.0",
+    "stripe": "^16.8.0",
+    "jsonwebtoken": "^9.0.2",
+    "playwright": "^1.47.0",
+    "cheerio": "^1.0.0",
+    "fuse.js": "^7.0.0",
+    "openai": "^4.58.0",
+    "zod": "^3.23.0",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@types/jsonwebtoken": "^9.0.6",
+    "prisma": "^5.19.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.0"
+  }
+}
