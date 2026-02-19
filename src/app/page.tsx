@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 export default function LandingPage() {
+  const primaryHref = "/demo";
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Nav */}
@@ -8,6 +10,13 @@ export default function LandingPage() {
         <span className="text-xl font-semibold text-green-700">ClaimScout</span>
         <div className="flex gap-4">
           <Link
+            href={primaryHref}
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            Test Core Flow
+          </Link>
+          <Link
+            href={primaryHref}
             href="/dashboard"
             className="text-sm text-gray-600 hover:text-gray-900"
           >
@@ -17,7 +26,7 @@ export default function LandingPage() {
             href="/onboarding"
             className="text-sm bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
           >
-            Get Started
+            Run Demo
           </Link>
         </div>
       </nav>
@@ -33,13 +42,14 @@ export default function LandingPage() {
           you get paid.
         </p>
         <Link
+          href={primaryHref}
           href="/onboarding"
           className="mt-8 bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700"
         >
-          Connect Your Accounting Software
+          Test Matching Engine
         </Link>
         <p className="mt-4 text-sm text-gray-400">
-          2-minute setup. No credit card required.
+          No signup required for local testing.
         </p>
 
         {/* How it works */}

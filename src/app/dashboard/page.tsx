@@ -24,8 +24,8 @@ export default async function DashboardPage() {
 
   const company = member.company;
 
-  // If no accounting connection yet, prompt to connect
-  if (!company.rutterConnection) {
+  // In local mode, allow dashboard testing without live accounting OAuth.
+  if (isAuthEnabled() && !company.rutterConnection) {
     redirect("/onboarding/connect");
   }
 
