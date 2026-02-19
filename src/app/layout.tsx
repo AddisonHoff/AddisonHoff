@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+
+// Conditionally import Clerk only in production with valid keys
+let ClerkProvider: React.ComponentType<{children: React.ReactNode}> | null = null;
+try {
+  const { ClerkProvider: RealClerkProvider } = require("@clerk/nextjs");
+  if (
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.startsWith("pk_live")
+  ) {
+    ClerkProvider = RealClerkProvider;
+  }
+} catch {
+  // Clerk not available or not configured
+}
 
 export const metadata: Metadata = {
   title: "ClaimScout — Automatic Settlement Claims for Businesses",
@@ -13,13 +26,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const Wrapper = ClerkProvider || React.Fragment;
+
   return (
-    <ClerkProvider>
+    <Wrapper>
       <html lang="en">
         <body className="bg-gray-50 text-gray-900 antialiased">
           {children}
         </body>
       </html>
-    </ClerkProvider>
+    </Wrapper>
   );
 }
