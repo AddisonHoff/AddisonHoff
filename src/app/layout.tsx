@@ -1,16 +1,12 @@
 import React from "react";
 import type { Metadata } from "next";
-import React from "react";
 import "./globals.css";
 
-// Conditionally import Clerk only in production with valid keys
+// Conditionally import Clerk only when keys are configured
 let ClerkProvider: React.ComponentType<{children: React.ReactNode}> | null = null;
 try {
   const { ClerkProvider: RealClerkProvider } = require("@clerk/nextjs");
-  if (
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.startsWith("pk_live")
-  ) {
+  if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
     ClerkProvider = RealClerkProvider;
   }
 } catch {
