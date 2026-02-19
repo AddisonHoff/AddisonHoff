@@ -14,7 +14,7 @@ const createCompanySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const userId = await getCurrentUserId();
+  const currentUserId = await getCurrentUserId();
   let orgId: string | undefined;
 
   if (isAuthEnabled()) {
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     orgId = (await auth()).orgId ?? undefined;
   }
 
-  if (!userId) {
+  if (!currentUserId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
   // Check if user already has a company
   const existing = await db.companyMember.findFirst({
-    where: { clerkUserId: userId },
+    where: { clerkUserId: currentUserId },
   });
 
   if (existing) {
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       clerkOrgId: orgId,
       members: {
         create: {
-          clerkUserId: userId,
+          clerkUserId: currentUserId,
           role: "ADMIN",
           email: "", // Will be populated from Clerk user data
         },

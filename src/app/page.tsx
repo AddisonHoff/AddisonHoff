@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 export default function LandingPage() {
+  const primaryHref = "/demo";
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Nav */}
@@ -8,13 +10,13 @@ export default function LandingPage() {
         <span className="text-xl font-semibold text-green-700">ClaimScout</span>
         <div className="flex gap-4">
           <Link
-            href="/demo"
+            href={primaryHref}
             className="text-sm text-gray-600 hover:text-gray-900"
           >
             Test Core Flow
           </Link>
           <Link
-            href="/demo"
+            href={primaryHref}
             className="text-sm bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
           >
             Run Demo
@@ -32,8 +34,8 @@ export default function LandingPage() {
           open settlements and file claims automatically. You only pay when
           you get paid.
         </p>
-          <Link
-          href="/demo"
+        <Link
+          href={primaryHref}
           className="mt-8 bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700"
         >
           Test Matching Engine
